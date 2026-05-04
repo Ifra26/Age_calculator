@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,400;1,800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --purple: hsl(259, 100%, 65%);
+      --red: hsl(0, 100%, 67%);
+      --white: hsl(0, 100%, 100%);
+      --grey-100: hsl(0, 0%, 94%);
+      --grey-200: hsl(0, 0%, 86%);
+      --grey-500: hsl(0, 1%, 44%);
+      --black: hsl(0, 0%, 0%);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--grey-100);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 24px 24px 200px 24px;
+      padding: 56px;
+      width: 100%;
+      max-width: 840px;
+    }
+
+    /* ---- FORM SECTION ---- */
+    .form-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+    }
+
+    .inputs-row {
+      display: flex;
+      gap: 32px;
+      flex: 1;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 160px;
+      flex: 1;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--grey-500);
+      transition: color 0.2s;
+    }
+
+    .field.error label {
+      color: var(--red);
+    }
+
+    .field input {
+      font-family: 'Poppins', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--black);
+      border: 1px solid var(--grey-200);
+      border-radius: 8px;
+      padding: 12px 16px;
+      width: 100%;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+      caret-color: var(--purple);
+    }
+
+    .field input::placeholder {
+      color: var(--grey-200);
+    }
+
+    .field input:focus {
+      border-color: var(--purple);
+    }
+
+    .field.error input {
+      border-color: var(--red);
+    }
+
+    .field .error-msg {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--red);
+      min-height: 16px;
+    }
+
+    /* ---- DIVIDER + BUTTON ---- */
+    .divider-row {
+      display: flex;
+      align-items: center;
+      position: relative;
+      margin: 16px 0 0;
+    }
+
+    .divider {
+      flex: 1;
+      height: 1px;
+      background: var(--grey-200);
+    }
+
+    .submit-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--purple);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-left: 32px;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover {
+      background: var(--black);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.95);
+    }
+
+    .submit-btn svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* ---- RESULTS SECTION ---- */
+    .results {
+      margin-top: 48px;
+    }
+
+    .result-row {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .result-number {
+      font-size: clamp(64px, 10vw, 104px);
+      font-weight: 800;
+      font-style: italic;
+      color: var(--purple);
+      min-width: 220px;
+      text-align: right;
+      display: inline-block;
+    }
+
+    .result-number.placeholder {
+      color: var(--purple);
+      letter-spacing: -4px;
+    }
+
+    .result-label {
+      font-size: clamp(64px, 10vw, 104px);
+      font-weight: 800;
+      font-style: italic;
+      color: var(--black);
+    }
+
+    /* ---- ANIMATION ---- */
+    @keyframes countUp {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .animating {
+      animation: countUp 0.05s ease-out;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 600px) {
+      .card {
+        padding: 48px 24px 64px;
+        border-radius: 24px 24px 100px 24px;
+      }
+
+      .inputs-row {
+        gap: 16px;
+      }
+
+      .field {
+        max-width: none;
+      }
+
+      .field input {
+        font-size: 20px;
+        padding: 10px 12px;
+      }
+
+      .divider-row {
+        justify-content: center;
+        margin: 24px 0 0;
+      }
+
+      .submit-btn {
+        margin-left: 0;
+        width: 56px;
+        height: 56px;
+      }
+
+      .divider {
+        display: none;
+      }
+
+      .result-number {
+        min-width: 0;
+        text-align: left;
+      }
+
+      .result-row {
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <!-- FORM -->
+    <div class="form-section">
+      <div class="inputs-row">
+        <div class="field" id="field-day">
+          <label for="day">Day</label>
+          <input type="number" id="day" placeholder="DD" min="1" max="31" autocomplete="off">
+          <span class="error-msg" id="err-day"></span>
+        </div>
+        <div class="field" id="field-month">
+          <label for="month">Month</label>
+          <input type="number" id="month" placeholder="MM" min="1" max="12" autocomplete="off">
+          <span class="error-msg" id="err-month"></span>
+        </div>
+        <div class="field" id="field-year">
+          <label for="year">Year</label>
+          <input type="number" id="year" placeholder="YYYY" min="1" autocomplete="off">
+          <span class="error-msg" id="err-year"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVIDER + BUTTON -->
+    <div class="divider-row">
+      <div class="divider"></div>
+      <button class="submit-btn" id="submit-btn" aria-label="Calculate age">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 44">
+          <g fill="none" stroke="#FFF" stroke-width="2">
+            <path d="M1 22.019C8.333 21.686 23 25.616 23 44M23 44V0M45 22.019C37.667 21.686 23 25.616 23 44"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" aria-live="polite">
+      <div class="result-row">
+        <span class="result-number" id="years">--</span>
+        <span class="result-label">years</span>
+      </div>
+      <div class="result-row">
+        <span class="result-number" id="months">--</span>
+        <span class="result-label">months</span>
+      </div>
+      <div class="result-row">
+        <span class="result-number" id="days">--</span>
+        <span class="result-label">days</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const btn = document.getElementById('submit-btn');
+    const dayInput = document.getElementById('day');
+    const monthInput = document.getElementById('month');
+    const yearInput = document.getElementById('year');
+    const yearsEl = document.getElementById('years');
+    const monthsEl = document.getElementById('months');
+    const daysEl = document.getElementById('days');
+
+    function setError(fieldId, errId, message) {
+      document.getElementById(fieldId).classList.add('error');
+      document.getElementById(errId).textContent = message;
+    }
+
+    function clearError(fieldId, errId) {
+      document.getElementById(fieldId).classList.remove('error');
+      document.getElementById(errId).textContent = '';
+    }
+
+    function daysInMonth(month, year) {
+      return new Date(year, month, 0).getDate();
+    }
+
+    function animateCount(el, target) {
+      const duration = 800;
+      const start = performance.now();
+      const startVal = 0;
+
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(startVal + (target - startVal) * eased);
+        el.textContent = current;
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          el.textContent = target;
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    btn.addEventListener('click', () => {
+      let hasError = false;
+
+      const dayVal = dayInput.value.trim();
+      const monthVal = monthInput.value.trim();
+      const yearVal = yearInput.value.trim();
+
+      // Clear all errors first
+      clearError('field-day', 'err-day');
+      clearError('field-month', 'err-month');
+      clearError('field-year', 'err-year');
+
+      // Validate required
+      if (!dayVal) { setError('field-day', 'err-day', 'This field is required'); hasError = true; }
+      if (!monthVal) { setError('field-month', 'err-month', 'This field is required'); hasError = true; }
+      if (!yearVal) { setError('field-year', 'err-year', 'This field is required'); hasError = true; }
+
+      if (hasError) { resetResults(); return; }
+
+      const day = parseInt(dayVal, 10);
+      const month = parseInt(monthVal, 10);
+      const year = parseInt(yearVal, 10);
+
+      // Validate ranges
+      if (day < 1 || day > 31) { setError('field-day', 'err-day', 'Must be a valid day'); hasError = true; }
+      if (month < 1 || month > 12) { setError('field-month', 'err-month', 'Must be a valid month'); hasError = true; }
+
+      const currentYear = new Date().getFullYear();
+      if (year > currentYear) { setError('field-year', 'err-year', 'Must be in the past'); hasError = true; }
+      if (year < 1) { setError('field-year', 'err-year', 'Must be a valid year'); hasError = true; }
+
+      if (hasError) { resetResults(); return; }
+
+      // Validate day in month
+      if (!hasError && month >= 1 && month <= 12) {
+        const maxDays = daysInMonth(month, year);
+        if (day > maxDays) {
+          setError('field-day', 'err-day', 'Must be a valid date');
+          hasError = true;
+        }
+      }
+
+      // Validate not in future
+      if (!hasError) {
+        const inputDate = new Date(year, month - 1, day);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (inputDate > today) {
+          setError('field-year', 'err-year', 'Must be in the past');
+          setError('field-month', 'err-month', '');
+          setError('field-day', 'err-day', '');
+          hasError = true;
+        }
+      }
+
+      if (hasError) { resetResults(); return; }
+
+      // Calculate age
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+
+      let ageYears = today.getFullYear() - birthDate.getFullYear();
+      let ageMonths = today.getMonth() - birthDate.getMonth();
+      let ageDays = today.getDate() - birthDate.getDate();
+
+      if (ageDays < 0) {
+        ageMonths--;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        ageDays += prevMonth.getDate();
+      }
+
+      if (ageMonths < 0) {
+        ageYears--;
+        ageMonths += 12;
+      }
+
+      animateCount(yearsEl, ageYears);
+      animateCount(monthsEl, ageMonths);
+      animateCount(daysEl, ageDays);
+    });
+
+    function resetResults() {
+      yearsEl.textContent = '--';
+      monthsEl.textContent = '--';
+      daysEl.textContent = '--';
+    }
+  </script>
+</body>
+</html>
